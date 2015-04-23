@@ -18,7 +18,7 @@ public class Draft_17 extends Draft_10 {
 		super.postProcessHandshakeRequestAsClient( request );
 		request.put( "Sec-WebSocket-Version", "13" );// overwriting the previous
 		request.put( "Sec-WebSocket-Protocol", "sip");
-		request.put( "Origin", "http://192.168.1.110:50600");
+		request.put( "Origin", "http://www.sipinspector.com");
 		return request;
 	}
 
