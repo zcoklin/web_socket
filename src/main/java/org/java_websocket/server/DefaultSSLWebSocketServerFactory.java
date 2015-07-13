@@ -1,5 +1,6 @@
 package org.java_websocket.server;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.Socket;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectionKey;
@@ -34,7 +35,10 @@ public class DefaultSSLWebSocketServerFactory implements WebSocketServer.WebSock
 
 	@Override
 	public ByteChannel wrapChannel( SocketChannel channel, SelectionKey key ) throws IOException {
-		SSLEngine e = sslcontext.createSSLEngine();
+	    SSLEngine e = sslcontext.createSSLEngine();
+	    String[] cipherSuites=e.getSupportedCipherSuites();
+        removeRestrictions();
+        cipherSuites=e.getSupportedCipherSuites();
 		e.setUseClientMode( false );
 		return new SSLSocketChannel2( channel, e, exec, key );
 	}
@@ -48,4 +52,20 @@ public class DefaultSSLWebSocketServerFactory implements WebSocketServer.WebSock
 	public WebSocketImpl createWebSocket( WebSocketAdapter a, List<Draft> d, Socket s ) {
 		return new WebSocketImpl( a, d );
 	}
+	
+    private static void removeRestrictions()
+    {
+        try
+        {
+            Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
+            field.setAccessible(true);
+            field.set(null, java.lang.Boolean.FALSE);
+            System.out.println("Java Cryptography Extension restrictions unlocked");
+
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Failed to remove Java Cryptography Extension restrictions: " + ex.getMessage());
+        }
+    }
 }
