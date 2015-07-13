@@ -7,69 +7,86 @@ import java.nio.channels.SocketChannel;
 
 import javax.net.ssl.SSLException;
 
+public class AbstractWrappedByteChannel implements WrappedByteChannel
+{
 
-public class AbstractWrappedByteChannel implements WrappedByteChannel {
+    public AbstractWrappedByteChannel(ByteChannel towrap)
+    {
+        this.channel = towrap;
+    }
 
-	private final ByteChannel channel;
+    public AbstractWrappedByteChannel(WrappedByteChannel towrap)
+    {
+        this.channel = towrap;
+    }
 
-	public AbstractWrappedByteChannel( ByteChannel towrap ) {
-		this.channel = towrap;
-	}
+    private final ByteChannel channel;
 
-	public AbstractWrappedByteChannel( WrappedByteChannel towrap ) {
-		this.channel = towrap;
-	}
+    @Override
+    public void close() throws IOException
+    {
+        channel.close();
+    }
 
-	@Override
-	public int read( ByteBuffer dst ) throws IOException {
-		return channel.read( dst );
-	}
+    @Override
+    public boolean isBlocking()
+    {
+        if (channel instanceof SocketChannel)
+        {
+            return ((SocketChannel) channel).isBlocking();
+        }
+        else if (channel instanceof WrappedByteChannel)
+        {
+            return ((WrappedByteChannel) channel).isBlocking();
+        }
+        return false;
+    }
 
-	@Override
-	public boolean isOpen() {
-		return channel.isOpen();
-	}
+    @Override
+    public boolean isNeedRead()
+    {
+        return channel instanceof WrappedByteChannel ? ((WrappedByteChannel) channel).isNeedRead() : false;
 
-	@Override
-	public void close() throws IOException {
-		channel.close();
-	}
+    }
 
-	@Override
-	public int write( ByteBuffer src ) throws IOException {
-		return channel.write( src );
-	}
+    @Override
+    public boolean isNeedWrite()
+    {
+        return channel instanceof WrappedByteChannel ? ((WrappedByteChannel) channel).isNeedWrite() : false;
+    }
 
-	@Override
-	public boolean isNeedWrite() {
-		return channel instanceof WrappedByteChannel ? ( (WrappedByteChannel) channel ).isNeedWrite() : false;
-	}
+    @Override
+    public boolean isOpen()
+    {
+        return channel.isOpen();
+    }
 
-	@Override
-	public void writeMore() throws IOException {
-		if( channel instanceof WrappedByteChannel )
-			( (WrappedByteChannel) channel ).writeMore();
+    @Override
+    public int read(ByteBuffer dst) throws IOException
+    {
+        return channel.read(dst);
+    }
 
-	}
+    @Override
+    public int readMore(ByteBuffer dst) throws SSLException
+    {
+        return channel instanceof WrappedByteChannel ? ((WrappedByteChannel) channel).readMore(dst) : 0;
+    }
 
-	@Override
-	public boolean isNeedRead() {
-		return channel instanceof WrappedByteChannel ? ( (WrappedByteChannel) channel ).isNeedRead() : false;
+    @Override
+    public int write(ByteBuffer src) throws IOException
+    {
+        return channel.write(src);
+    }
 
-	}
+    @Override
+    public void writeMore() throws IOException
+    {
+        if (channel instanceof WrappedByteChannel)
+        {
+            ((WrappedByteChannel) channel).writeMore();
+        }
 
-	@Override
-	public int readMore( ByteBuffer dst ) throws SSLException {
-		return channel instanceof WrappedByteChannel ? ( (WrappedByteChannel) channel ).readMore( dst ) : 0;
-	}
-
-	@Override
-	public boolean isBlocking() {
-		if( channel instanceof SocketChannel )
-			return ( (SocketChannel) channel ).isBlocking();
-		else if( channel instanceof WrappedByteChannel )
-			return ( (WrappedByteChannel) channel ).isBlocking();
-		return false;
-	}
+    }
 
 }

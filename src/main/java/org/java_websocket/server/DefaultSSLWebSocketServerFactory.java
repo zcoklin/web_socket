@@ -1,4 +1,5 @@
 package org.java_websocket.server;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.Socket;
@@ -17,42 +18,27 @@ import org.java_websocket.WebSocketAdapter;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.drafts.Draft;
 
+public class DefaultSSLWebSocketServerFactory implements WebSocketServer.WebSocketServerFactory
+{
+    public DefaultSSLWebSocketServerFactory(SSLContext sslContext)
+    {
+        this(sslContext, Executors.newSingleThreadScheduledExecutor());
+    }
 
-public class DefaultSSLWebSocketServerFactory implements WebSocketServer.WebSocketServerFactory {
-	protected SSLContext sslcontext;
-	protected ExecutorService exec;
+    public DefaultSSLWebSocketServerFactory(SSLContext sslContext, ExecutorService exec)
+    {
+        if (sslContext == null || exec == null)
+        {
+            throw new IllegalArgumentException();
+        }
+        this.sslcontext = sslContext;
+        this.exec = exec;
+    }
 
-	public DefaultSSLWebSocketServerFactory( SSLContext sslContext ) {
-		this( sslContext, Executors.newSingleThreadScheduledExecutor() );
-	}
+    protected ExecutorService exec;
 
-	public DefaultSSLWebSocketServerFactory( SSLContext sslContext , ExecutorService exec ) {
-		if( sslContext == null || exec == null )
-			throw new IllegalArgumentException();
-		this.sslcontext = sslContext;
-		this.exec = exec;
-	}
+    protected SSLContext      sslcontext;
 
-	@Override
-	public ByteChannel wrapChannel( SocketChannel channel, SelectionKey key ) throws IOException {
-	    SSLEngine e = sslcontext.createSSLEngine();
-	    String[] cipherSuites=e.getSupportedCipherSuites();
-        removeRestrictions();
-        cipherSuites=e.getSupportedCipherSuites();
-		e.setUseClientMode( false );
-		return new SSLSocketChannel2( channel, e, exec, key );
-	}
-
-	@Override
-	public WebSocketImpl createWebSocket( WebSocketAdapter a, Draft d, Socket c ) {
-		return new WebSocketImpl( a, d );
-	}
-
-	@Override
-	public WebSocketImpl createWebSocket( WebSocketAdapter a, List<Draft> d, Socket s ) {
-		return new WebSocketImpl( a, d );
-	}
-	
     private static void removeRestrictions()
     {
         try
@@ -67,5 +53,28 @@ public class DefaultSSLWebSocketServerFactory implements WebSocketServer.WebSock
         {
             System.out.println("Failed to remove Java Cryptography Extension restrictions: " + ex.getMessage());
         }
+    }
+
+    @Override
+    public WebSocketImpl createWebSocket(WebSocketAdapter a, Draft d, Socket c)
+    {
+        return new WebSocketImpl(a, d);
+    }
+
+    @Override
+    public WebSocketImpl createWebSocket(WebSocketAdapter a, List<Draft> d, Socket s)
+    {
+        return new WebSocketImpl(a, d);
+    }
+
+    @Override
+    public ByteChannel wrapChannel(SocketChannel channel, SelectionKey key) throws IOException
+    {
+        SSLEngine e = sslcontext.createSSLEngine();
+        String[] cipherSuites = e.getSupportedCipherSuites();
+        removeRestrictions();
+        cipherSuites = e.getSupportedCipherSuites();
+        e.setUseClientMode(false);
+        return new SSLSocketChannel2(channel, e, exec, key);
     }
 }

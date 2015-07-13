@@ -1,29 +1,35 @@
 package org.java_websocket.handshake;
 
-public class HandshakeImpl1Server extends HandshakedataImpl1 implements ServerHandshakeBuilder {
-	private short httpstatus;
-	private String httpstatusmessage;
+public class HandshakeImpl1Server extends HandshakedataImpl1 implements ServerHandshakeBuilder
+{
+    public HandshakeImpl1Server()
+    {
+    }
 
-	public HandshakeImpl1Server() {
-	}
+    private short  httpstatus;
 
-	@Override
-	public String getHttpStatusMessage() {
-		return httpstatusmessage;
-	}
+    private String httpstatusmessage;
 
-	@Override
-	public short getHttpStatus() {
-		return httpstatus;
-	}
+    @Override
+    public short getHttpStatus()
+    {
+        return httpstatus;
+    }
 
-	public void setHttpStatusMessage( String message ) {
-		this.httpstatusmessage = message;
-	}
+    @Override
+    public String getHttpStatusMessage()
+    {
+        return httpstatusmessage;
+    }
 
-	public void setHttpStatus( short status ) {
-		httpstatus = status;
-	}
+    public void setHttpStatus(short status)
+    {
+        httpstatus = status;
+    }
 
+    public void setHttpStatusMessage(String message)
+    {
+        this.httpstatusmessage = message;
+    }
 
 }
