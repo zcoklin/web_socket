@@ -60,7 +60,7 @@ public class SSLClientExample
      * Keystore with certificate created like so (in JKS format):
      *
      * keytool -genkey -validity 3650 -keystore "keystore.jks" -storepass
-     * "storepassword" -keypass "keypassword" -alias "default" -dname
+     * "storepassword" -keypass "keypassword" -keyalg RSA -alias "default" -dname
      * "CN=127.0.0.1, OU=MyOrgUnit, O=MyOrg, L=MyCity, S=MyRegion, C=MyCountry"
      */
     public static void main(String[] args) throws Exception
