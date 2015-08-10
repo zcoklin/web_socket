@@ -30,12 +30,6 @@ public class Charsetfunctions
         }
     }
 
-    public static void main(String[] args) throws InvalidDataException
-    {
-        stringUtf8(utf8Bytes("\0"));
-        stringAscii(asciiBytes("\0"));
-    }
-
     public static String stringAscii(byte[] bytes)
     {
         return stringAscii(bytes, 0, bytes.length);

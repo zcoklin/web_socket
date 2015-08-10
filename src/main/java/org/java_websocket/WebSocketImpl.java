@@ -2,7 +2,6 @@ package org.java_websocket;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.NotYetConnectedException;
@@ -47,13 +46,13 @@ public class WebSocketImpl implements WebSocket
 
     /**
      * crates a websocket with client role
-     * 
+     *
      * @param socket
      *            may be unbound
      */
     public WebSocketImpl(WebSocketListener listener, Draft draft)
     {
-        if (listener == null || draft == null && role == Role.SERVER)
+        if ((listener == null) || ((draft == null) && (role == Role.SERVER)))
         {
             throw new IllegalArgumentException("parameters must not be null");
         }
@@ -67,12 +66,6 @@ public class WebSocketImpl implements WebSocket
         }
     }
 
-    @Deprecated
-    public WebSocketImpl(WebSocketListener listener, Draft draft, Socket socket)
-    {
-        this(listener, draft);
-    }
-
     /**
      * crates a websocket with server role
      */
@@ -81,7 +74,7 @@ public class WebSocketImpl implements WebSocket
         this(listener, (Draft) null);
         this.role = Role.SERVER;
         // draft.copyInstance will be called when the draft is first needed
-        if (drafts == null || drafts.isEmpty())
+        if ((drafts == null) || drafts.isEmpty())
         {
             knownDrafts = defaultdraftlist;
         }
@@ -89,12 +82,6 @@ public class WebSocketImpl implements WebSocket
         {
             knownDrafts = drafts;
         }
-    }
-
-    @Deprecated
-    public WebSocketImpl(WebSocketListener listener, List<Draft> drafts, Socket socket)
-    {
-        this(listener, drafts);
     }
 
     public static/* final */boolean        DEBUG                           = true;                        // must
@@ -184,7 +171,7 @@ public class WebSocketImpl implements WebSocket
 
     private void close(int code, String message, boolean remote)
     {
-        if (readystate != READYSTATE.CLOSING && readystate != READYSTATE.CLOSED)
+        if ((readystate != READYSTATE.CLOSING) && (readystate != READYSTATE.CLOSED))
         {
             if (readystate == READYSTATE.OPEN)
             {
@@ -294,14 +281,14 @@ public class WebSocketImpl implements WebSocket
                     wsl.onWebsocketPong(this, f);
                     continue;
                 }
-                else if (!fin || curop == Opcode.CONTINUOUS)
+                else if (!fin || (curop == Opcode.CONTINUOUS))
                 {
                     if (curop != Opcode.CONTINUOUS)
                     {
                         if (current_continuous_frame_opcode != null)
                         {
                             throw new InvalidDataException(CloseFrame.PROTOCOL_ERROR,
-                                "Previous continuous frame sequence not completed.");
+                                    "Previous continuous frame sequence not completed.");
                         }
                         current_continuous_frame_opcode = curop;
                     }
@@ -310,14 +297,14 @@ public class WebSocketImpl implements WebSocket
                         if (current_continuous_frame_opcode == null)
                         {
                             throw new InvalidDataException(CloseFrame.PROTOCOL_ERROR,
-                                "Continuous frame sequence was not started.");
+                                    "Continuous frame sequence was not started.");
                         }
                         current_continuous_frame_opcode = null;
                     }
                     else if (current_continuous_frame_opcode == null)
                     {
                         throw new InvalidDataException(CloseFrame.PROTOCOL_ERROR,
-                            "Continuous frame sequence was not started.");
+                                "Continuous frame sequence was not started.");
                     }
                     try
                     {
@@ -332,7 +319,7 @@ public class WebSocketImpl implements WebSocket
                 else if (current_continuous_frame_opcode != null)
                 {
                     throw new InvalidDataException(CloseFrame.PROTOCOL_ERROR,
-                        "Continuous frame sequence not completed.");
+                            "Continuous frame sequence not completed.");
                 }
                 else if (curop == Opcode.TEXT)
                 {
@@ -359,7 +346,7 @@ public class WebSocketImpl implements WebSocket
                 else
                 {
                     throw new InvalidDataException(CloseFrame.PROTOCOL_ERROR,
-                        "non control or continious frame expected");
+                            "non control or continious frame expected");
                 }
             }
         }
@@ -412,7 +399,7 @@ public class WebSocketImpl implements WebSocket
                     catch (InvalidDataException e)
                     {
                         close(CloseFrame.ABNORMAL_CLOSE,
-                            "remote peer closed connection before flashpolicy could be transmitted", true);
+                                "remote peer closed connection before flashpolicy could be transmitted", true);
                     }
                     return false;
                 }
@@ -433,7 +420,7 @@ public class WebSocketImpl implements WebSocket
                                 d.setParseMode(role);
                                 socketBuffer.reset();
                                 Handshakedata tmphandshake = d.translateHandshake(socketBuffer);
-                                if (tmphandshake instanceof ClientHandshake == false)
+                                if ((tmphandshake instanceof ClientHandshake) == false)
                                 {
                                     flushAndClose(CloseFrame.PROTOCOL_ERROR, "wrong http function", false);
                                     return false;
@@ -460,7 +447,7 @@ public class WebSocketImpl implements WebSocket
                                         return false;
                                     }
                                     write(d.createHandshake(d.postProcessHandshakeResponseAsServer(handshake, response),
-                                        role));
+                                            role));
                                     draft = d;
                                     open(handshake);
                                     return true;
@@ -481,7 +468,7 @@ public class WebSocketImpl implements WebSocket
                     {
                         // special case for multiple step handshakes
                         Handshakedata tmphandshake = draft.translateHandshake(socketBuffer);
-                        if (tmphandshake instanceof ClientHandshake == false)
+                        if ((tmphandshake instanceof ClientHandshake) == false)
                         {
                             flushAndClose(CloseFrame.PROTOCOL_ERROR, "wrong http function", false);
                             return false;
@@ -505,7 +492,7 @@ public class WebSocketImpl implements WebSocket
                 {
                     draft.setParseMode(role);
                     Handshakedata tmphandshake = draft.translateHandshake(socketBuffer);
-                    if (tmphandshake instanceof ServerHandshake == false)
+                    if ((tmphandshake instanceof ServerHandshake) == false)
                     {
                         flushAndClose(CloseFrame.PROTOCOL_ERROR, "wrong http function", false);
                         return false;
@@ -631,7 +618,7 @@ public class WebSocketImpl implements WebSocket
         if (DEBUG)
         {
             System.out.println("write(" + buf.remaining() + "): {"
-                + (buf.remaining() > 1000 ? "too big to display" : new String(buf.array())) + "}");
+                    + (buf.remaining() > 1000 ? "too big to display" : new String(buf.array())) + "}");
         }
 
         outQueue.add(buf);
@@ -657,7 +644,7 @@ public class WebSocketImpl implements WebSocket
     }
 
     /**
-     * 
+     *
      * @param remote
      *            Indicates who "generated" <code>code</code>.<br>
      *            <code>true</code> means that this endpoint received the
@@ -772,13 +759,14 @@ public class WebSocketImpl implements WebSocket
         closeConnection(closecode, closemessage, closedremotely);
     }
 
+    @Override
     public void closeConnection(int code, String message)
     {
         closeConnection(code, message, false);
     }
 
     /**
-     * 
+     *
      */
     public void decode(ByteBuffer socketBuffer)
     {
@@ -786,12 +774,10 @@ public class WebSocketImpl implements WebSocket
 
         if (DEBUG)
         {
-            System.out
-                .println(
-                    "process(" + socketBuffer.remaining() + "): {"
-                        + (socketBuffer.remaining() > 1000 ? "too big to display"
+            System.out.println("process(" + socketBuffer.remaining() + "): {"
+                    + (socketBuffer.remaining() > 1000 ? "too big to display"
                             : new String(socketBuffer.array(), socketBuffer.position(), socketBuffer.remaining()))
-                        + "}");
+                    + "}");
         }
 
         if (readystate != READYSTATE.NOT_YET_CONNECTED)
@@ -803,17 +789,17 @@ public class WebSocketImpl implements WebSocket
         {
             if (decodeHandshake(socketBuffer))
             {
-                assert tmpHandshakeBytes.hasRemaining() != socketBuffer.hasRemaining() || !socketBuffer.hasRemaining(); // the
-                                                                                                                        // buffers
-                                                                                                                        // will
-                                                                                                                        // never
-                                                                                                                        // have
-                                                                                                                        // remaining
-                                                                                                                        // bytes
-                                                                                                                        // at
-                                                                                                                        // the
-                                                                                                                        // same
-                                                                                                                        // time
+                assert(tmpHandshakeBytes.hasRemaining() != socketBuffer.hasRemaining()) || !socketBuffer.hasRemaining(); // the
+                                                                                                                         // buffers
+                                                                                                                         // will
+                                                                                                                         // never
+                                                                                                                         // have
+                                                                                                                         // remaining
+                                                                                                                         // bytes
+                                                                                                                         // at
+                                                                                                                         // the
+                                                                                                                         // same
+                                                                                                                         // time
 
                 if (socketBuffer.hasRemaining())
                 {
@@ -941,7 +927,7 @@ public class WebSocketImpl implements WebSocket
 
     /**
      * Send Binary data (plain bytes) to the other end.
-     * 
+     *
      * @throws IllegalArgumentException
      * @throws NotYetConnectedException
      */
@@ -957,7 +943,7 @@ public class WebSocketImpl implements WebSocket
 
     /**
      * Send Text data to the other end.
-     * 
+     *
      * @throws IllegalArgumentException
      * @throws NotYetConnectedException
      */

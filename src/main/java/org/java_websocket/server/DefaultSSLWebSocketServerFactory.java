@@ -1,7 +1,6 @@
 package org.java_websocket.server;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.Socket;
 import java.nio.channels.ByteChannel;
 import java.nio.channels.SelectionKey;
@@ -27,7 +26,7 @@ public class DefaultSSLWebSocketServerFactory implements WebSocketServer.WebSock
 
     public DefaultSSLWebSocketServerFactory(SSLContext sslContext, ExecutorService exec)
     {
-        if (sslContext == null || exec == null)
+        if ((sslContext == null) || (exec == null))
         {
             throw new IllegalArgumentException();
         }
