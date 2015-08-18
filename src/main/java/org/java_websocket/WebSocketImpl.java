@@ -84,7 +84,7 @@ public class WebSocketImpl implements WebSocket
         }
     }
 
-    public static/* final */boolean        DEBUG                           = true;                        // must
+    public static/* final */boolean        DEBUG                           = false;                        // must
                                                                                                           // be
                                                                                                           // final
                                                                                                           // in
@@ -237,7 +237,6 @@ public class WebSocketImpl implements WebSocket
             {
                 if (DEBUG)
                 {
-                    System.out.println("matched frame: " + f);
                 }
                 Opcode curop = f.getOpcode();
                 boolean fin = f.isFin();
@@ -588,7 +587,6 @@ public class WebSocketImpl implements WebSocket
     {
         if (DEBUG)
         {
-            System.out.println("open using draft: " + draft.getClass().getSimpleName());
         }
         readystate = READYSTATE.OPEN;
         try
@@ -617,8 +615,6 @@ public class WebSocketImpl implements WebSocket
     {
         if (DEBUG)
         {
-            System.out.println("write(" + buf.remaining() + "): {"
-                    + (buf.remaining() > 1000 ? "too big to display" : new String(buf.array())) + "}");
         }
 
         outQueue.add(buf);
@@ -774,10 +770,6 @@ public class WebSocketImpl implements WebSocket
 
         if (DEBUG)
         {
-            System.out.println("process(" + socketBuffer.remaining() + "): {"
-                    + (socketBuffer.remaining() > 1000 ? "too big to display"
-                            : new String(socketBuffer.array(), socketBuffer.position(), socketBuffer.remaining()))
-                    + "}");
         }
 
         if (readystate != READYSTATE.NOT_YET_CONNECTED)
@@ -968,7 +960,6 @@ public class WebSocketImpl implements WebSocket
     {
         if (DEBUG)
         {
-            System.out.println("send frame: " + framedata);
         }
         write(draft.createBinaryFrame(framedata));
     }

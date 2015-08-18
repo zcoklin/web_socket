@@ -54,7 +54,6 @@ public class ServerStressTest extends JFrame
                         }
                         catch (InterruptedException e)
                         {
-                            System.out.println("adjust chanced");
                         }
                     }
                 });
@@ -189,7 +188,6 @@ public class ServerStressTest extends JFrame
 
     public void adjust() throws InterruptedException
     {
-        System.out.println("Adjust");
         try
         {
             uri = new URI(uriinput.getText());
@@ -206,7 +204,6 @@ public class ServerStressTest extends JFrame
                 @Override
                 public void onClose(int code, String reason, boolean remote)
                 {
-                    System.out.println("Closed duo " + code + " " + reason);
                     clients.setValue(websockets.size());
                     websockets.remove(this);
                 }
@@ -252,8 +249,6 @@ public class ServerStressTest extends JFrame
                 }
             }
         }
-        System.out.println(websockets.size() + "/" + notyetconnected + " clients sent \"" + payload + "\""
-            + (System.currentTimeMillis() - time1));
     }
 
     public void stopAdjust()

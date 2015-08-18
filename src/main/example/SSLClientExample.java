@@ -25,7 +25,6 @@ class WebSocketChatClient extends WebSocketClient
     @Override
     public void onClose(int code, String reason, boolean remote)
     {
-        System.out.println("Disconnected");
         System.exit(0);
 
     }
@@ -40,15 +39,11 @@ class WebSocketChatClient extends WebSocketClient
     @Override
     public void onMessage(String message)
     {
-        System.out.println("got: " + message);
-
     }
 
     @Override
     public void onOpen(ServerHandshake handshakedata)
     {
-        System.out.println("Connected");
-
     }
 
 }

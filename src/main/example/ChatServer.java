@@ -40,7 +40,6 @@ public class ChatServer extends WebSocketServer
         }
         ChatServer s = new ChatServer(port);
         s.start();
-        System.out.println("ChatServer started on port: " + s.getPort());
 
         BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
         while (true)
@@ -65,7 +64,6 @@ public class ChatServer extends WebSocketServer
     public void onClose(WebSocket conn, int code, String reason, boolean remote)
     {
         this.sendToAll(conn + " has left the room!");
-        System.out.println(conn + " has left the room!");
     }
 
     @Override
@@ -82,21 +80,18 @@ public class ChatServer extends WebSocketServer
     @Override
     public void onFragment(WebSocket conn, Framedata fragment)
     {
-        System.out.println("received fragment: " + fragment);
     }
 
     @Override
     public void onMessage(WebSocket conn, String message)
     {
         this.sendToAll(message);
-        System.out.println(conn + ": " + message);
     }
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake)
     {
         this.sendToAll("new connection: " + handshake.getResourceDescriptor());
-        System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
     }
 
     /**

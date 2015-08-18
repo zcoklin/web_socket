@@ -36,12 +36,9 @@ public class FragmentedFramesExample
             return;
         }
 
-        System.out.println("This example shows how to send fragmented(continuous) messages.");
-
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         while (websocket.isOpen())
         {
-            System.out.println("Please type in a loooooong line(which then will be send in 2 byte fragments):");
             String longline = stdin.readLine();
             ByteBuffer longelinebuffer = ByteBuffer.wrap(longline.getBytes());
             longelinebuffer.rewind();
@@ -74,8 +71,6 @@ public class FragmentedFramesExample
                 }
 
             }
-            System.out.println("You can not type in the next long message or press Ctr-C to exit.");
         }
-        System.out.println("FragmentedFramesExample terminated");
     }
 }
